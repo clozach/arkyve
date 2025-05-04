@@ -27,31 +27,31 @@ function find_archive_dir -a start_dir
     return 0
 end
 
-# Check if any file arguments are provided
+# Check if any arguments are provided
 if test (count $argv) -lt 1
-    echo '{"title": "Error", "subtitle": "No files provided", "icon": "⚠️"}'
+    osascript -e 'display notification "No files or directories provided" with title "Arkyve" subtitle "Error" sound name "Basso"'
     exit 1
 end
 
-# Process each file
+# Process each item
 set success_count 0
-set total_files (count $argv)
-set first_file $argv[1]
-set archive_dir (find_archive_dir (dirname (realpath "$first_file")))
+set total_items (count $argv)
+set first_item $argv[1]
+set archive_dir (find_archive_dir (dirname (realpath "$first_item")))
 
-for file in $argv
-    # Check if file exists
-    if not test -f "$file"
-        echo "Error: File '$file' not found"
+for item in $argv
+    # Check if item exists
+    if not test -e "$item"
+        osascript -e "display notification \"Item '$item' not found\" with title \"Arkyve\" subtitle \"Error\" sound name \"Basso\""
         continue
     end
     
-    # Use AppleScript to move the file (makes it undoable)
-    set file_path (realpath "$file")
+    # Use AppleScript to move the item (makes it undoable)
+    set item_path (realpath "$item")
     set archive_path (realpath "$archive_dir")
     
     osascript -e "tell application \"Finder\"" \
-              -e "    move POSIX file \"$file_path\" to POSIX file \"$archive_path\" with replacing" \
+              -e "    move POSIX file \"$item_path\" to POSIX file \"$archive_path\" with replacing" \
               -e "end tell" >/dev/null 2>&1
     
     if test $status -eq 0
@@ -59,9 +59,9 @@ for file in $argv
     end
 end
 
-# Return feedback to LaunchBar
-if test $success_count -eq $total_files
-    echo "{\"title\": \"✓ Archived\", \"subtitle\": \"$success_count files → $archive_dir\", \"icon\": \"✓\"}"
+# Show notification with results
+if test $success_count -eq $total_items
+    osascript -e "display notification \"$success_count items → $archive_dir\" with title \"Arkyve\" subtitle \"✓ Archived\" sound name \"Glass\""
 else
-    echo "{\"title\": \"⚠️ Partially Archived\", \"subtitle\": \"$success_count of $total_files files → $archive_dir\", \"icon\": \"⚠️\"}"
+    osascript -e "display notification \"$success_count of $total_items items → $archive_dir\" with title \"Arkyve\" subtitle \"⚠️ Partially Archived\" sound name \"Basso\""
 end
