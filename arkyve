@@ -29,24 +29,39 @@ end
 
 # Check if any file arguments are provided
 if test (count $argv) -lt 1
-    echo "Usage: arkyve <file1> [<file2> ...]"
+    echo '{"title": "Error", "subtitle": "No files provided", "icon": "⚠️"}'
     exit 1
 end
 
 # Process each file
+set success_count 0
+set total_files (count $argv)
+set first_file $argv[1]
+set archive_dir (find_archive_dir (dirname (realpath "$first_file")))
+
 for file in $argv
     # Check if file exists
     if not test -f "$file"
         echo "Error: File '$file' not found"
         continue
     end
+    
+    # Use AppleScript to move the file (makes it undoable)
+    set file_path (realpath "$file")
+    set archive_path (realpath "$archive_dir")
+    
+    osascript -e "tell application \"Finder\"" \
+              -e "    move POSIX file \"$file_path\" to POSIX file \"$archive_path\" with replacing" \
+              -e "end tell"
+    
+    if test $status -eq 0
+        set success_count (math $success_count + 1)
+    end
+end
 
-    # Find or create archive directory
-    set archive_dir (find_archive_dir (pwd))
-
-    # Move file to archive
-    mv "$file" "$archive_dir/"
-
-    # Confirm move
-    echo "Moved '$file' to $archive_dir"
+# Return feedback to LaunchBar
+if test $success_count -eq $total_files
+    echo "{\"title\": \"✓ Archived\", \"subtitle\": \"$success_count files → $archive_dir\", \"icon\": \"✓\"}"
+else
+    echo "{\"title\": \"⚠️ Partially Archived\", \"subtitle\": \"$success_count of $total_files files → $archive_dir\", \"icon\": \"⚠️\"}"
 end
