@@ -1,0 +1,51 @@
+#!/usr/bin/env fish
+
+function find_archive_dir -a start_dir
+    # First check current directory for Archive/Archives
+    for dir in "Archive" "Archives"
+        if test -d "$start_dir/$dir"
+            echo "$start_dir/$dir"
+            return 0
+        end
+    end
+
+    # Then check parent directory if not in root
+    set parent_dir (dirname "$start_dir")
+    if test "$parent_dir" != "$start_dir"
+        for dir in "Archive" "Archives"
+            if test -d "$parent_dir/$dir"
+                echo "$parent_dir/$dir"
+                return 0
+            end
+        end
+    end
+
+    # If no archive found, create one in current directory
+    set archive_dir "$start_dir/Archive"
+    mkdir -p "$archive_dir"
+    echo "$archive_dir"
+    return 0
+end
+
+# Check if file argument is provided
+if test (count $argv) -ne 1
+    echo "Usage: arkyve <file>"
+    exit 1
+end
+
+set file $argv[1]
+
+# Check if file exists
+if not test -f "$file"
+    echo "Error: File '$file' not found"
+    exit 1
+end
+
+# Find or create archive directory
+set archive_dir (find_archive_dir (pwd))
+
+# Move file to archive
+mv "$file" "$archive_dir/"
+
+# Confirm move
+echo "Moved '$file' to $archive_dir"
