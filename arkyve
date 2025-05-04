@@ -52,7 +52,7 @@ for file in $argv
     
     osascript -e "tell application \"Finder\"" \
               -e "    move POSIX file \"$file_path\" to POSIX file \"$archive_path\" with replacing" \
-              -e "end tell"
+              -e "end tell" >/dev/null 2>&1
     
     if test $status -eq 0
         set success_count (math $success_count + 1)
