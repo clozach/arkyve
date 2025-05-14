@@ -1,8 +1,8 @@
 #!/usr/bin/env fish
 
 function find_archive_dir -a start_dir
-    # First check current directory for Archive/Archives
-    for dir in "Archive" "Archives"
+    # First check current directory for Archive/Archives/4-Archives
+    for dir in "Archive" "Archives" "4-Archives"
         if test -d "$start_dir/$dir"
             echo "$start_dir/$dir"
             return 0
@@ -12,7 +12,7 @@ function find_archive_dir -a start_dir
     # Then check parent directory if not in root
     set parent_dir (dirname "$start_dir")
     if test "$parent_dir" != "$start_dir"
-        for dir in "Archive" "Archives"
+        for dir in "Archive" "Archives" "4-Archives"
             if test -d "$parent_dir/$dir"
                 echo "$parent_dir/$dir"
                 return 0
