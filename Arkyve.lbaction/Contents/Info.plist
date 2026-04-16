@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIconFile</key>
+	<string>icon.png</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.clozach.LaunchBar.action.Arkyve</string>
+	<key>CFBundleName</key>
+	<string>Arkyve</string>
+	<key>LBAcceptedArgumentTypes</key>
+	<array>
+		<string>path</string>
+	</array>
+	<key>LBDescription</key>
+	<dict>
+		<key>LBAuthor</key>
+		<string>clozach</string>
+		<key>LBSummary</key>
+		<string>Move files to an Archive folder</string>
+	</dict>
+	<key>LBScripts</key>
+	<dict>
+		<key>LBDefaultScript</key>
+		<dict>
+			<key>LBKeepWindowActive</key>
+			<true/>
+			<key>LBScriptName</key>
+			<string>default.sh</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
